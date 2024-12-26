@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+  <link href="/192.png" rel="icon" sizes="192x192" type="image/png">
+  <title>Live Cricket Score 🏏</title>
+  <meta name="description" content="Get Real-time Live Cricket Score Update without refreshing the page." />
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/1.0.2/css/bulma.min.css" integrity="sha512-RpeJZX3aH5oZN3U3JhE7Sd+HG8XQsqmP3clIbu4G28p668yNsRNj3zMASKe1ATjl/W80wuEtCx2dFA8xaebG5w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&display=swap" rel="stylesheet">
+<style>
+html, body {
+	min-height: 100vh;
+	margin: 0;
+	padding: 0;
+	overflow-x: hidden;
+	font-family: "Geist Mono", serif;
+  word-wrap: break-word;
+}
+body {
+	background-color: #ddd4b3;
+	color: #121212;
+  font-family: 16px;
+	padding-bottom: 20px;
+}
+.title {
+  font-family: "Geist Mono", serif;
+    text-align: center;
+  }
+  select {
+    font-family: "Geist Mono", serif;
+  }
+  option {
+    font-family: "Geist Mono", serif;
+  }
+  .input {
+    font-family: "Geist Mono", serif;
+    
+  }
+  textarea {
+    font-family: "Geist Mono", serif;
+  }
+  .button {
+    font-family: "Geist Mono", serif;
+    margin-top: 10px;
+  }
+.box {
+  position: relative;
+  background: #833471;
+  border: 1px solid #B33771;
+  color: #F8EFBA;
+  margin-bottom: 10px;
+  border-radius: 20px;
+  padding: 30px;
+  padding-top: 50px;
+  padding-bottom: 50px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  font-family: "Geist Mono", serif;
+  letter-spacing: .04em;
+}
+  .switch {
+    position: relative;
+    display: inline-block;
+    width: 34px;
+    height: 20px;
+  }
+  
+  .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #f57d7d;
+    transition: 0.4s;
+    border-radius: 34px;
+  }
+  
+  .slider::before {
+    position: absolute;
+    content: '';
+    height: 14px;
+    width: 14px;
+    left: 3px;
+    bottom: 3px;
+    background-color: #e9e3e3;
+    transition: 0.4s;
+    border-radius: 50%;
+  }
+  
+  input:checked + .slider {
+    background-color: #35a00a;
+  }
+  
+  input:checked + .slider::before {
+    transform: translateX(14px);
+  }
+  body.dark-mode {
+    background-color: #392e4a;
+    color: #121212;
+    padding-bottom: 20px;
+  }
+  .dark-mode .box {
+  background-image: linear-gradient(to right top, #32072b, #290924, #21081d, #1a0617, #10030e);
+  border: 1px solid #9a74f1;
+ }
+  .text-all {
+    font-family: "Geist Mono", serif;
+    color: #041242;
+  }
+  .title {
+    font-family: "Geist Mono", serif;
+    color: #1e201e;
+  }
+  .dark-mode .title {
+    font-family: "Geist Mono", serif;
+    color: #82f395;
+  }
+  .dark-mode .text-all {
+    font-family: "Geist Mono", serif;
+    color: #f1d75f;
+  }
+  input::-webkit-input-placeholder {
+    color: #1f0505;
+  }
+  
+  input:-moz-placeholder {
+    color: #1f0505;
+  }
+  
+  input::-moz-placeholder {
+    color: #1f0505;
+  }
+  
+  input:-ms-input-placeholder {
+    color: #1f0505;
+  }
+    @keyframes shake {
+      0% { transform: translateX(0); }
+      25% { transform: translateX(-10px); }
+      50% { transform: translateX(10px); }
+      75% { transform: translateX(-10px); }
+      100% { transform: translateX(0); }
+    }
+    .shake {
+      animation: shake 0.5s ease-in-out;
+    }
+  p {
+    word-wrap: break-word;
+    overflow-x: auto;
+  }
+  .notification {
+    display: none;
+    position: center;
+    background-color: #8d290b;
+    color: rgb(245, 243, 147);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    font-family: "Geist Mono", serif;
+    font-weight: 600;
+    align-items: center;
+    word-wrap: break-word;
+    overflow-x: auto;
+}
+.notification.is-active {
+    display: block;
+}
+.dark-mode .notification {
+  background-color: #b9f843;
+  color: rgb(26, 5, 5);
+}
+</style>
+</head>
+<body>
+<section class="section">
+<div class="container">
+<div class="columns is-centered">
+<div class="column is-three-fifths">
+  <h1 class="title is-5 mt-2 mb-6">Live Cricket Score</h1>
+  <div class="field has-addons mt-4 mb-4">
+    <p class="text-all mb-2 is-size-6 mr-2"><b>Change Theme:</b></p>
+    <div class="toggle-container">
+      <label class="switch">
+          <input type="checkbox" id="darkModeToggle">
+          <span class="slider"></span>
+      </label>
+  </div>
+  </div>
+  <div class="field">
+    <label class="label mr-2 text-all is-size-6">Enter Match ID</label>
+    <div class="control">
+      <input class="input" type="text" id="match-id" placeholder="Enter Match ID" value="91805" aria-label="Enter Match ID">
+    </div>
+  </div>
+  <div class="buttons">
+    <button class="button is-danger" id="fetch-score" aria-label="Fetch live score">Get Score</button>
+    <button class="button is-info" id="refresh-score" aria-label="Refresh live score">Refresh</button>
+  </div>
+  <div id="notification" class="notification mt-5">
+    <span></spap>
+    </div>
+   <div id="score-card" class="score-card box is-hidden">
+    <p id="score-output"></p>
+  </div>
+  <h1 class="title is-5 mt-6 mb-5">Disclaimer</h1>
+  <p class="text-all">
+    The score data retrieved from CricBuzz is collected strictly for personal use only. This data is scraped using custom scripts and stored locally on my Android device, which functions as a personal server. The data is accessed and displayed via Termux, and the network traffic is securely proxied through a Cloudflare Argo Tunnel.<br>
+    <br>
+    This setup is fully contained within my personal environment and is not accessible to the outside world. The data is not served externally or used for any commercial purposes. I do not claim ownership of any data or content provided by CricBuzz. The scraping process is solely for personal use and complies with CricBuzz’s terms of service, ensuring no infringement on their intellectual property rights.<br>
+    <br>
+    Please note that any use, redistribution, or public display beyond personal use may violate CricBuzz’s terms and may be subject to legal or ethical consequences. I take no responsibility for any actions outside of personal, non-commercial use.</p>
+  </div>
+</div>
+</div>
+</div>
+</section>
+<script>
+const canonicalLink = document.createElement('link');
+canonicalLink.setAttribute('rel', 'canonical');
+canonicalLink.setAttribute('href', window.location.href);
+
+  document.head.appendChild(canonicalLink);
+    const toggle = document.getElementById('darkModeToggle');
+    const body = document.body;
+
+    function applyTheme(theme) {
+        if (theme === 'dark') {
+            body.classList.add('dark-mode');
+            toggle.checked = true;
+        } else {
+            body.classList.remove('dark-mode');
+            toggle.checked = false;
+        }
+    }
+
+    function initTheme() {
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            applyTheme(savedTheme);
+        } else {
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            applyTheme(prefersDark ? 'dark' : 'light');
+        }
+    }
+
+    toggle.addEventListener('change', () => {
+        const newTheme = toggle.checked ? 'dark' : 'light';
+        applyTheme(newTheme);
+        localStorage.setItem('theme', newTheme);
+    });
+
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+        const newSystemTheme = e.matches ? 'dark' : 'light';
+        const savedTheme = localStorage.getItem('theme');
+        if (!savedTheme) {
+            applyTheme(newSystemTheme);
+        }
+    });
+  
+    initTheme();
+
+window.onload = async function() {
+  try {
+    const savedMatchId = localStorage.getItem('matchId');
+    const matchIdInput = document.getElementById('match-id');
+    if (savedMatchId && matchIdInput) {
+      matchIdInput.value = savedMatchId;
+      await fetchScore(savedMatchId);
+    }
+  } catch (error) {
+    console.error('Error loading match data:', error);
+  }
+};
+
+  document.getElementById('fetch-score').addEventListener('click', function() {
+    const matchId = document.getElementById('match-id').value.trim();
+
+    if (!matchId) {
+      showNotification("Match ID cannot be empty.");
+      return;
+    }
+
+    localStorage.setItem('matchId', matchId);
+
+    fetchScore(matchId);
+  });
+
+  document.getElementById('refresh-score').addEventListener('click', function() {
+    const matchId = document.getElementById('match-id').value.trim();
+
+    if (!matchId) {
+      showNotification("Match ID cannot be empty to refresh.");
+      return;
+    }
+
+    fetchScore(matchId);
+  });
+
+function getCurrentDateTime() {
+  const options = {
+      timeZone: "Asia/Kolkata",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+  };
+
+  const now = new Date();
+  const date = now.toLocaleDateString("en-US", options);
+
+  return `${date}`;
+}
+
+  async function fetchScore(matchId) {
+    document.getElementById('score-card').classList.add('is-hidden');
+
+    try {
+      const response = await fetch(`/score?id=${matchId}`);
+      
+      if (!response.ok) {
+        throw new Error('Unable to fetch live score. Please try again later.');
+      }
+
+      const data = await response.json();
+      const CurrrentTime = getCurrentDateTime();
+
+
+    if (data.livescore === "Match Stats will Update Soon") {
+
+      const scoreOutput = `
+        Match: ${data.title}<br>
+        Status: ${data.update}<br>
+        Updated at: ${CurrrentTime}
+      `;
+      
+      document.getElementById('score-output').innerHTML = scoreOutput;
+      document.getElementById('score-card').classList.remove('is-hidden');
+      document.getElementById('score-output').classList.add('shake');
+
+    } else {
+
+      const scoreOutput = `
+        Match: ${data.title}<br>
+        Livescore: ${data.livescore}<br>
+        Status: ${data.update}<br>
+        Runrate: ${data.runrate}<br>
+        Updated at: ${CurrrentTime}
+      `;
+      
+      document.getElementById('score-output').innerHTML = scoreOutput;
+      document.getElementById('score-card').classList.remove('is-hidden');
+      document.getElementById('score-output').classList.add('shake');
+
+    }
+
+      setTimeout(() => {
+        document.getElementById('score-output').classList.remove('shake');
+      }, 500);
+      
+    } catch (error) {
+      showNotification(error.message);
+    }
+  }
+
+  function showNotification(message) {
+  const notification = document.getElementById('notification');
+  notification.querySelector('span').textContent = message;
+  notification.classList.add('is-active');
+  setTimeout(() => {
+      notification.classList.remove('is-active');
+  }, 2000);
+}
+</script>
+</body>
+</html>
