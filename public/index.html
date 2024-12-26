@@ -51,7 +51,7 @@ body {
   }
 .box {
   position: relative;
-  background: #833471;
+  background: #70135b;
   border: 1px solid #B33771;
   color: #F8EFBA;
   margin-bottom: 10px;
@@ -62,6 +62,7 @@ body {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   font-family: "Geist Mono", serif;
   letter-spacing: .04em;
+  transition: opacity 0.5s ease-in-out, transform 0.3s ease-in-out;
 }
   .switch {
     position: relative;
@@ -180,6 +181,11 @@ body {
   background-color: #b9f843;
   color: rgb(26, 5, 5);
 }
+.is-hidden {
+    opacity: 0;
+    transform: scale(0.9);
+    pointer-events: none;
+}
 </style>
 </head>
 <body>
@@ -187,9 +193,9 @@ body {
 <div class="container">
 <div class="columns is-centered">
 <div class="column is-three-fifths">
-  <h1 class="title is-5 mt-2 mb-6">Live Cricket Score</h1>
-  <div class="field has-addons mt-4 mb-4">
-    <p class="text-all mb-2 is-size-6 mr-2"><b>Change Theme:</b></p>
+  <h1 class="title is-5 mt-2 mb-6">Live Cricket Score 🥎</h1>
+  <div class="field mt-4 mb-4">
+    <p class="text-all mb-3 is-size-6 mr-2"><b>Change Theme:</b></p>
     <div class="toggle-container">
       <label class="switch">
           <input type="checkbox" id="darkModeToggle">
@@ -198,9 +204,9 @@ body {
   </div>
   </div>
   <div class="field">
-    <label class="label mr-2 text-all is-size-6">Enter Match ID</label>
+    <label class="label mr-2 text-all is-size-6">Enter Match ID:</label>
     <div class="control">
-      <input class="input" type="text" id="match-id" placeholder="Enter Match ID" value="91805" aria-label="Enter Match ID">
+      <input class="input is-warning" type="text" id="match-id" placeholder="Enter Match ID" value="91805" aria-label="Enter Match ID">
     </div>
   </div>
   <div class="buttons">
@@ -208,19 +214,19 @@ body {
     <button class="button is-info" id="refresh-score" aria-label="Refresh live score">Refresh</button>
   </div>
   <div id="notification" class="notification mt-5">
-    <span></spap>
-    </div>
-   <div id="score-card" class="score-card box is-hidden">
-    <p id="score-output"></p>
+    <span></span>
   </div>
-  <h1 class="title is-5 mt-6 mb-5">Disclaimer</h1>
+  <div id="score-card" class="score-card box is-hidden" aria-live="polite">
+    <p id="score-output" tabindex="0"></p>
+  </div>    
+  <h1 class="title is-5 mt-6 mb-5">📒 Disclaimer</h1>
   <p class="text-all">
     The score data retrieved from CricBuzz is collected strictly for personal use only. This data is scraped using custom scripts and stored locally on my Android device, which functions as a personal server. The data is accessed and displayed via Termux, and the network traffic is securely proxied through a Cloudflare Argo Tunnel.<br>
     <br>
     This setup is fully contained within my personal environment and is not accessible to the outside world. The data is not served externally or used for any commercial purposes. I do not claim ownership of any data or content provided by CricBuzz. The scraping process is solely for personal use and complies with CricBuzz’s terms of service, ensuring no infringement on their intellectual property rights.<br>
     <br>
-    Please note that any use, redistribution, or public display beyond personal use may violate CricBuzz’s terms and may be subject to legal or ethical consequences. I take no responsibility for any actions outside of personal, non-commercial use.</p>
-  </div>
+    Please note that any use, redistribution, or public display beyond personal use may violate CricBuzz’s terms and may be subject to legal or ethical consequences. I take no responsibility for any actions outside of personal, non-commercial use.
+  </p>
 </div>
 </div>
 </div>
@@ -270,18 +276,23 @@ canonicalLink.setAttribute('href', window.location.href);
   
     initTheme();
 
-window.onload = async function() {
+document.addEventListener('DOMContentLoaded', async () => {
   try {
-    const savedMatchId = localStorage.getItem('matchId');
     const matchIdInput = document.getElementById('match-id');
-    if (savedMatchId && matchIdInput) {
-      matchIdInput.value = savedMatchId;
-      await fetchScore(savedMatchId);
+    if (!matchIdInput) {
+      console.error('Match ID input field is missing.');
+      return;
+    }
+
+    const matchId = matchIdInput.value.trim();
+    if (matchId) {
+      localStorage.setItem('matchId', matchId);
+      await fetchScore(matchId);
     }
   } catch (error) {
     console.error('Error loading match data:', error);
   }
-};
+});
 
   document.getElementById('fetch-score').addEventListener('click', function() {
     const matchId = document.getElementById('match-id').value.trim();
@@ -341,28 +352,32 @@ function getCurrentDateTime() {
     if (data.livescore === "Match Stats will Update Soon") {
 
       const scoreOutput = `
-        Match: ${data.title}<br>
-        Status: ${data.update}<br>
-        Updated at: ${CurrrentTime}
+        🏏 ${data.title}<br>
+        📝 ${data.update}<br>
+        ⌛ ${CurrrentTime}
       `;
       
-      document.getElementById('score-output').innerHTML = scoreOutput;
-      document.getElementById('score-card').classList.remove('is-hidden');
-      document.getElementById('score-output').classList.add('shake');
+        const scoreCard = document.getElementById('score-card');
+        const scoreOutputElement = document.getElementById('score-output');
+        scoreOutputElement.innerHTML = scoreOutput;
+        scoreCard.classList.remove('is-hidden');
+        scoreOutputElement.classList.add('shake');
 
     } else {
 
       const scoreOutput = `
-        Match: ${data.title}<br>
-        Livescore: ${data.livescore}<br>
-        Status: ${data.update}<br>
-        Runrate: ${data.runrate}<br>
-        Updated at: ${CurrrentTime}
+        🏏 ${data.title}<br>
+        🟢 score: ${data.livescore}<br>
+        📊 ${data.runrate}<br>
+        📝 ${data.update}<br>
+        ⌛ ${CurrrentTime}
       `;
       
-      document.getElementById('score-output').innerHTML = scoreOutput;
-      document.getElementById('score-card').classList.remove('is-hidden');
-      document.getElementById('score-output').classList.add('shake');
+      const scoreCard = document.getElementById('score-card');
+      const scoreOutputElement = document.getElementById('score-output');
+      scoreOutputElement.innerHTML = scoreOutput;
+      scoreCard.classList.remove('is-hidden');
+      scoreOutputElement.classList.add('shake');
 
     }
 
